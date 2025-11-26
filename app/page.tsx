@@ -251,31 +251,31 @@ export default function Home() {
               key={movie.id}
               className="w-full max-w-sm bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
             >
-              {/* Mobile-optimized layout: Poster on top, content below */}
-              <div className="flex flex-col sm:flex-row">
-                {/* Poster - Larger on mobile */}
-                <div className="flex-shrink-0 w-full sm:w-[120px] flex justify-center sm:justify-start bg-gray-100 dark:bg-gray-700">
+              {/* Mobile-optimized layout: Poster centered on top, content below */}
+              <div className="flex flex-col">
+                {/* Poster - Centered and larger */}
+                <div className="flex-shrink-0 w-full flex justify-center items-center bg-gray-100 dark:bg-gray-700 py-4">
                   {movie.poster_path && movie.poster_path !== 'N/A' ? (
                     <Image
                       src={movie.poster_path}
                       alt={movie.title}
-                      width={150}
-                      height={225}
-                      className="object-cover w-full sm:w-[120px] h-auto"
+                      width={200}
+                      height={300}
+                      className="object-cover rounded-lg shadow-md"
                     />
                   ) : (
-                    <div className="w-full sm:w-[120px] h-[225px] sm:h-[180px] bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-                      <span className="text-gray-500 dark:text-gray-400 text-xs">No Image</span>
+                    <div className="w-[200px] h-[300px] bg-gray-300 dark:bg-gray-600 flex items-center justify-center rounded-lg">
+                      <span className="text-gray-500 dark:text-gray-400 text-sm">No Image</span>
                     </div>
                   )}
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 p-4 sm:p-5 flex flex-col">
-                  <h2 className="text-xl sm:text-2xl font-semibold mb-2 text-gray-900 dark:text-white text-center sm:text-left">
+                  <h2 className="text-xl sm:text-2xl font-semibold mb-2 text-gray-900 dark:text-white text-center">
                     {movie.title}
                   </h2>
-                  <p className="text-base text-gray-600 dark:text-gray-400 mb-4 text-center sm:text-left">
+                  <p className="text-base text-gray-600 dark:text-gray-400 mb-4 text-center">
                     {movie.year}
                   </p>
 
