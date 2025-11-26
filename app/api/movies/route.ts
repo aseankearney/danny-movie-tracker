@@ -85,7 +85,10 @@ export async function GET(request: Request) {
       
       if (omdbData) {
         const convertedMovie = convertOMDbToMovie(omdbData, movie.year)
-        movies.push(convertedMovie)
+        movies.push({
+          ...convertedMovie,
+          status: null, // Will be set later from database
+        } as MovieWithStatus)
       } else {
         // If OMDb lookup fails, create a basic movie entry
         movies.push({
@@ -97,7 +100,8 @@ export async function GET(request: Request) {
           overview: '',
           revenue: 0,
           year: movie.year,
-        })
+          status: null,
+        } as MovieWithStatus)
       }
       
       // Small delay to avoid rate limiting (OMDb free tier has limits)
