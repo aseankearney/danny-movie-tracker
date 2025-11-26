@@ -117,12 +117,21 @@ export async function GET(request: Request) {
       status: statuses[movie.id]?.status || null,
     }))
     
+    // Filter to only return untagged movies (status === null)
+    // This ensures we only show movies that haven't been tagged yet
+    const untaggedMovies = moviesWithStatus.filter(movie => movie.status === null)
+    
+    // Calculate if there are more untagged movies beyond this batch
+    // We need to check if there are more movies in the original list that might be untagged
+    const totalUntagged = topGrossingMovies.length - Object.keys(statuses).length
+    const hasMoreUntagged = offset + untaggedMovies.length < totalUntagged
+    
     return NextResponse.json({
-      movies: moviesWithStatus,
-      total: topGrossingMovies.length,
+      movies: untaggedMovies,
+      total: totalUntagged,
       offset,
       limit: limit || topGrossingMovies.length,
-      hasMore: offset + (limit || topGrossingMovies.length) < topGrossingMovies.length
+      hasMore: hasMoreUntagged
     })
   } catch (error: any) {
     console.error('Error fetching movies:', error)

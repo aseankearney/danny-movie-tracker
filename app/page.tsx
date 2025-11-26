@@ -67,7 +67,7 @@ export default function Home() {
   const fetchRemainingMovies = async (startOffset: number) => {
     setLoadingMore(true)
     try {
-      // Fetch remaining movies in batches of 50
+      // Fetch remaining untagged movies in batches of 50
       let offset = startOffset
       const batchSize = 50
       
@@ -79,8 +79,13 @@ export default function Home() {
           break
         }
         
-        // Filter out movies that have already been marked
+        // API already filters to only return untagged movies, but double-check
         const unmarkedMovies = data.movies.filter((m: MovieWithStatus) => m.status === null)
+        
+        if (unmarkedMovies.length === 0) {
+          // No more untagged movies
+          break
+        }
         
         setMovies(prev => {
           const existingIds = new Set(prev.map(m => m.id))
@@ -116,25 +121,22 @@ export default function Home() {
       })
 
       if (response.ok) {
-        // Update local state
-        setMovies(prev => prev.map(m => 
-          m.id === movieId ? { ...m, status } : m
-        ))
+        // Remove the movie from the list immediately (since it's now tagged)
+        setMovies(prev => prev.filter(m => m.id !== movieId))
         
-        // Move to next set of movies after a short delay
+        // Move to next movie after a short delay
         setTimeout(() => {
-          // Filter out the movie that was just updated
-          setMovies(prev => prev.filter(m => m.id !== movieId))
-          
-          // Move to next set if available
-          if (currentIndex < movies.length - 1) {
-            // Stay at current index (movies list will shift)
-            setCurrentIndex(Math.max(0, currentIndex))
-          } else {
-            // Reset to beginning if we've gone through all movies
+          // If we've gone through all movies, try to fetch more untagged movies
+          if (currentIndex >= movies.length - 1) {
+            // Reset to beginning and fetch more if available
             setCurrentIndex(0)
+            // Try to fetch more untagged movies
+            fetchRemainingMovies(movies.length)
+          } else {
+            // Stay at current index (the list has shifted, so we're already on the next movie)
+            // No need to change currentIndex since we removed the current movie
           }
-        }, 500)
+        }, 300)
       }
     } catch (error) {
       console.error('Error updating status:', error)
