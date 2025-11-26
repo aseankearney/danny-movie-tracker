@@ -18,5 +18,21 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  /* Prevent text size adjustment on iOS */
+  -webkit-text-size-adjust: 100%;
+  /* Smooth scrolling for mobile */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Touch-friendly button styles */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Optimize images for mobile */
+img {
+  max-width: 100%;
+  height: auto;
 }
 

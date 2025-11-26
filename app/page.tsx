@@ -8,7 +8,7 @@ export default function Home() {
   const [movies, setMovies] = useState<MovieWithStatus[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
-  const [moviesPerPage, setMoviesPerPage] = useState(3)
+  const [moviesPerPage, setMoviesPerPage] = useState(1)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showDebug, setShowDebug] = useState(false)
   const [updating, setUpdating] = useState<string | number | null>(null)
@@ -195,17 +195,17 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen p-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <main className="min-h-screen p-4 sm:p-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 dark:text-white">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4 sm:mb-8 text-gray-900 dark:text-white px-2">
           Danny, have you seen these movies?
         </h1>
 
         {/* Debug Panel */}
         {showDebug && (
-          <div className="mb-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold mb-2">Debug Options</h2>
-            <label className="block mb-2">
+          <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            <h2 className="text-base sm:text-lg font-semibold mb-2">Debug Options</h2>
+            <label className="block mb-2 text-sm sm:text-base">
               Movies per page:
               <input
                 type="number"
@@ -217,10 +217,10 @@ export default function Home() {
                   setMoviesPerPage(Math.max(1, Math.min(10, value)))
                   setCurrentIndex(0)
                 }}
-                className="ml-2 px-2 py-1 border rounded dark:bg-gray-700 dark:text-white"
+                className="ml-2 px-2 py-1 border rounded dark:bg-gray-700 dark:text-white text-base"
               />
             </label>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
               Showing {currentIndex + 1}-{Math.min(currentIndex + moviesPerPage, movies.length)} of {movies.length} movies
               {loadingMore && <span className="ml-2 text-blue-500">(Loading more in background...)</span>}
             </div>
@@ -231,63 +231,64 @@ export default function Home() {
         <div className="text-center mb-4">
           <button
             onClick={() => setShowDebug(!showDebug)}
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline"
+            className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline touch-manipulation"
           >
             {showDebug ? 'Hide' : 'Show'} Debug Options
           </button>
           {loadingMore && (
-            <div className="mt-2 text-sm text-blue-600 dark:text-blue-400">
+            <div className="mt-2 text-xs sm:text-sm text-blue-600 dark:text-blue-400">
               ⏳ Loading more movies in the background...
             </div>
           )}
         </div>
 
-        {/* Movies Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {/* Movies - Single column for mobile, optimized for iPhone */}
+        <div className="flex flex-col items-center gap-4 mb-6">
           {currentMovies.map((movie) => (
             <div
               key={movie.id}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+              className="w-full max-w-sm bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
             >
-              <div className="flex">
-                {/* Poster */}
-                <div className="flex-shrink-0">
+              {/* Mobile-optimized layout: Poster on top, content below */}
+              <div className="flex flex-col sm:flex-row">
+                {/* Poster - Larger on mobile */}
+                <div className="flex-shrink-0 w-full sm:w-[120px] flex justify-center sm:justify-start bg-gray-100 dark:bg-gray-700">
                   {movie.poster_path && movie.poster_path !== 'N/A' ? (
                     <Image
                       src={movie.poster_path}
                       alt={movie.title}
-                      width={100}
-                      height={150}
-                      className="object-cover"
+                      width={150}
+                      height={225}
+                      className="object-cover w-full sm:w-[120px] h-auto"
                     />
                   ) : (
-                    <div className="w-[100px] h-[150px] bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
+                    <div className="w-full sm:w-[120px] h-[225px] sm:h-[180px] bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
                       <span className="text-gray-500 dark:text-gray-400 text-xs">No Image</span>
                     </div>
                   )}
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 p-4 flex flex-col">
-                  <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white line-clamp-2">
+                <div className="flex-1 p-4 sm:p-5 flex flex-col">
+                  <h2 className="text-xl sm:text-2xl font-semibold mb-2 text-gray-900 dark:text-white text-center sm:text-left">
                     {movie.title}
                   </h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  <p className="text-base text-gray-600 dark:text-gray-400 mb-4 text-center sm:text-left">
                     {movie.year}
                   </p>
 
-                  {/* Buttons */}
-                  <div className="mt-auto space-y-2">
+                  {/* Buttons - Larger touch targets for mobile */}
+                  <div className="mt-auto space-y-3">
                     <button
                       onClick={() => handleStatusUpdate(movie.id, 'Seen-Liked')}
                       disabled={updating === movie.id}
-                      className="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full px-6 py-4 sm:py-3 bg-green-500 hover:bg-green-600 active:bg-green-700 text-white rounded-lg font-semibold text-lg sm:text-base transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 touch-manipulation"
                     >
                       {updating === movie.id ? (
                         'Updating...'
                       ) : (
                         <>
-                          <span>👍</span>
+                          <span className="text-2xl">👍</span>
                           <span>Seen It</span>
                         </>
                       )}
@@ -295,13 +296,13 @@ export default function Home() {
                     <button
                       onClick={() => handleStatusUpdate(movie.id, 'Seen-Hated')}
                       disabled={updating === movie.id}
-                      className="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full px-6 py-4 sm:py-3 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white rounded-lg font-semibold text-lg sm:text-base transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 touch-manipulation"
                     >
                       {updating === movie.id ? (
                         'Updating...'
                       ) : (
                         <>
-                          <span>👎</span>
+                          <span className="text-2xl">👎</span>
                           <span>Seen It</span>
                         </>
                       )}
@@ -309,7 +310,7 @@ export default function Home() {
                     <button
                       onClick={() => handleStatusUpdate(movie.id, 'Not Seen')}
                       disabled={updating === movie.id}
-                      className="w-full px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-6 py-4 sm:py-3 bg-gray-500 hover:bg-gray-600 active:bg-gray-700 text-white rounded-lg font-semibold text-lg sm:text-base transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                     >
                       {updating === movie.id ? 'Updating...' : 'Never Seen It'}
                     </button>
@@ -325,7 +326,7 @@ export default function Home() {
           <div className="text-center">
             <button
               onClick={() => setCurrentIndex(currentIndex + moviesPerPage)}
-              className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium"
+              className="px-6 py-3 sm:py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-lg font-semibold text-base sm:text-sm touch-manipulation"
             >
               Load More ({movies.length - currentIndex - moviesPerPage} remaining)
             </button>
