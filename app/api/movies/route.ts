@@ -49,6 +49,9 @@ export async function GET(request: Request) {
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined
     const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : 0
 
+    // Get statuses from database FIRST to filter out tagged movies early
+    const statuses = await getMovieStatuses()
+    
     // Get the curated list of top grossing movies
     const topGrossingMovies = getAllTopGrossingMovies(1989)
     
@@ -62,15 +65,22 @@ export async function GET(request: Request) {
       )
     }
     
-    // Apply pagination to the list before fetching from OMDb
-    const moviesToFetch = limit 
-      ? topGrossingMovies.slice(offset, offset + limit)
-      : topGrossingMovies.slice(offset)
+    // Filter out movies that are already tagged BEFORE fetching from OMDb
+    // This saves API calls and ensures we only work with untagged movies
+    const untaggedMovieList = topGrossingMovies.filter(movie => {
+      const movieId = movie.imdbId || `movie-${movie.year}-${movie.title.replace(/\s+/g, '-').toLowerCase()}`
+      return !statuses[movieId] || statuses[movieId].status === null
+    })
     
-    // Fetch movie details from OMDb for each movie
+    // Apply pagination to the untagged movies list
+    const paginatedMovies = limit 
+      ? untaggedMovieList.slice(offset, offset + limit)
+      : untaggedMovieList.slice(offset)
+    
+    // Fetch movie details from OMDb for each untagged movie
     const movies: MovieWithStatus[] = []
     
-    for (const movie of moviesToFetch) {
+    for (const movie of paginatedMovies) {
       let omdbData = null
       
       // Try IMDb ID first if available, then fall back to title/year
@@ -87,7 +97,7 @@ export async function GET(request: Request) {
         const convertedMovie = convertOMDbToMovie(omdbData, movie.year)
         movies.push({
           ...convertedMovie,
-          status: null, // Will be set later from database
+          status: null, // These are all untagged
         } as MovieWithStatus)
       } else {
         // If OMDb lookup fails, create a basic movie entry
@@ -108,30 +118,16 @@ export async function GET(request: Request) {
       await new Promise(resolve => setTimeout(resolve, 100))
     }
     
-    // Get statuses from database
-    const statuses = await getMovieStatuses()
-    
-    // Combine movies with their statuses
-    const moviesWithStatus: MovieWithStatus[] = movies.map(movie => ({
-      ...movie,
-      status: statuses[movie.id]?.status || null,
-    }))
-    
-    // Filter to only return untagged movies (status === null)
-    // This ensures we only show movies that haven't been tagged yet
-    const untaggedMovies = moviesWithStatus.filter(movie => movie.status === null)
-    
-    // Calculate if there are more untagged movies beyond this batch
-    // We need to check if there are more movies in the original list that might be untagged
-    const totalUntagged = topGrossingMovies.length - Object.keys(statuses).length
-    const hasMoreUntagged = offset + untaggedMovies.length < totalUntagged
+    // Calculate pagination info based on untagged movies
+    const totalUntagged = untaggedMovieList.length
+    const hasMore = offset + (limit || paginatedMovies.length) < totalUntagged
     
     return NextResponse.json({
-      movies: untaggedMovies,
+      movies: movies, // All movies here are already untagged
       total: totalUntagged,
       offset,
-      limit: limit || topGrossingMovies.length,
-      hasMore: hasMoreUntagged
+      limit: limit || paginatedMovies.length,
+      hasMore: hasMore
     })
   } catch (error: any) {
     console.error('Error fetching movies:', error)
