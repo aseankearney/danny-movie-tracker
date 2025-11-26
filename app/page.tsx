@@ -200,7 +200,7 @@ export default function Home() {
     <main className="min-h-screen p-4 sm:p-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4 sm:mb-8 text-gray-900 dark:text-white px-2">
-          Danny, have you seen these movies?
+          Danny, have you seen this movie?
         </h1>
 
         {/* Debug Panel */}
