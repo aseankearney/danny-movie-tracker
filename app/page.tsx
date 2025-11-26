@@ -144,7 +144,7 @@ export default function Home() {
   }
 
   const currentMovies = movies.slice(currentIndex, currentIndex + moviesPerPage)
-  const hasMore = currentIndex + moviesPerPage < movies.length
+  const hasMoreMovies = currentIndex + moviesPerPage < movies.length
 
   if (loading) {
     return (
@@ -321,7 +321,7 @@ export default function Home() {
         </div>
 
         {/* Navigation */}
-        {hasMore && (
+        {hasMoreMovies && (
           <div className="text-center">
             <button
               onClick={() => setCurrentIndex(currentIndex + moviesPerPage)}
