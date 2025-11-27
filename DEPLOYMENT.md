@@ -60,7 +60,7 @@ This guide will walk you through deploying your movie tracker app to Vercel with
 
 2. **Configure environment variables**:
    - In the "Environment Variables" section, add:
-     - `OMDB_API_KEY` = your OMDb API key
+     - `TMDB_API_KEY` = your TMDb API key
      - `DATABASE_URL` = your Neon connection string
    - Click "Add" for each variable
 
@@ -77,7 +77,7 @@ This guide will walk you through deploying your movie tracker app to Vercel with
 ## Step 4: Verify Deployment
 
 1. Visit your Vercel deployment URL (shown after deployment)
-2. The app should load and fetch movies from OMDb
+2. The app should load and fetch movies from TMDb
 3. Try marking a movie as "Seen It" or "Never Seen It" to test the database
 
 ## Troubleshooting
@@ -90,7 +90,7 @@ This guide will walk you through deploying your movie tracker app to Vercel with
 
 ### API Key Issues
 
-- Ensure `OMDB_API_KEY` is set in Vercel environment variables
+- Ensure `TMDB_API_KEY` is set in Vercel environment variables
 - Check that the API key is valid
 
 ### Build Errors

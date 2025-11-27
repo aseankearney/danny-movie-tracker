@@ -41,16 +41,10 @@ If nothing works:
 
 ## Step 4: Alternative Solutions
 
-### Option A: Use OMDb API (Easier Signup)
-1. Go to http://www.omdbapi.com/apikey.aspx
-2. Sign up (usually easier than TMDB)
-3. Get your free API key
-4. Update the code to use OMDb instead
-
-### Option B: Use Mock Data for Testing
+### Option A: Use Mock Data for Testing
 You can test the app with sample data while you work on getting an API key. The app structure is ready - you just need movie data.
 
-### Option C: Manual Data Entry
+### Option B: Manual Data Entry
 For a small number of movies, you could manually add them to the database for testing.
 
 ## Getting Your TMDB API Key (Once Account is Created)

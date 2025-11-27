@@ -1,23 +1,23 @@
 import { NextResponse } from 'next/server'
 import { getAllTopGrossingMovies } from '@/lib/topGrossingMovies'
-import { getMovieByIMDbId, getMovieByTitleAndYear, convertOMDbToMovie } from '@/lib/omdb'
+import { getMovieByIMDbId, getMovieByTitleAndYear, convertTMDbToMovie } from '@/lib/tmdb'
 import { getMovieStatuses, initDatabase } from '@/lib/database'
 import { MovieWithStatus } from '@/types/movie'
 
 export async function GET(request: Request) {
   try {
-    // Check if OMDb API key is set
-    const omdbApiKey = process.env.OMDB_API_KEY
+    // Check if TMDb API key is set
+    const tmdbApiKey = process.env.TMDB_API_KEY
     
-    if (!omdbApiKey) {
+    if (!tmdbApiKey) {
       return NextResponse.json(
         { 
-          error: 'OMDB_API_KEY is not set',
-          message: 'Please set OMDB_API_KEY in your .env.local file. See README.md for instructions.',
+          error: 'TMDB_API_KEY is not set',
+          message: 'Please set TMDB_API_KEY in your .env.local file. See README.md for instructions.',
           troubleshooting: [
-            '1. Get a free API key from http://www.omdbapi.com/apikey.aspx',
+            '1. Create a TMDb account at https://www.themoviedb.org/settings/api',
             '2. Create a .env.local file in the project root',
-            '3. Add: OMDB_API_KEY=your_key_here',
+            '3. Add: TMDB_API_KEY=your_key_here',
             '4. Restart your dev server'
           ]
         },
@@ -65,7 +65,7 @@ export async function GET(request: Request) {
       )
     }
     
-    // Filter out movies that are already tagged BEFORE fetching from OMDb
+    // Filter out movies that are already tagged BEFORE fetching from TMDb
     // This saves API calls and ensures we only work with untagged movies
     const untaggedMovieList = topGrossingMovies.filter(movie => {
       const movieId = movie.imdbId || `movie-${movie.year}-${movie.title.replace(/\s+/g, '-').toLowerCase()}`
@@ -77,30 +77,30 @@ export async function GET(request: Request) {
       ? untaggedMovieList.slice(offset, offset + limit)
       : untaggedMovieList.slice(offset)
     
-    // Fetch movie details from OMDb for each untagged movie
+    // Fetch movie details from TMDb for each untagged movie
     const movies: MovieWithStatus[] = []
     
     for (const movie of paginatedMovies) {
-      let omdbData = null
+      let tmdbData = null
       
       // Try IMDb ID first if available, then fall back to title/year
       if (movie.imdbId) {
-        omdbData = await getMovieByIMDbId(movie.imdbId)
+        tmdbData = await getMovieByIMDbId(movie.imdbId)
       }
       
       // If IMDb ID lookup failed, try title and year
-      if (!omdbData) {
-        omdbData = await getMovieByTitleAndYear(movie.title, movie.year)
+      if (!tmdbData) {
+        tmdbData = await getMovieByTitleAndYear(movie.title, movie.year)
       }
       
-      if (omdbData) {
-        const convertedMovie = convertOMDbToMovie(omdbData, movie.year)
+      if (tmdbData) {
+        const convertedMovie = convertTMDbToMovie(tmdbData, movie.year)
         movies.push({
           ...convertedMovie,
           status: null, // These are all untagged
         } as MovieWithStatus)
       } else {
-        // If OMDb lookup fails, create a basic movie entry
+        // If TMDb lookup fails, create a basic movie entry
         movies.push({
           id: movie.imdbId || `movie-${movie.year}-${movie.title.replace(/\s+/g, '-').toLowerCase()}`,
           title: movie.title,
@@ -114,7 +114,7 @@ export async function GET(request: Request) {
         } as MovieWithStatus)
       }
       
-      // Small delay to avoid rate limiting (OMDb free tier has limits)
+      // Small delay to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 100))
     }
     
@@ -133,14 +133,14 @@ export async function GET(request: Request) {
     console.error('Error fetching movies:', error)
     
     // Provide helpful error messages
-    if (error.message?.includes('OMDB_API_KEY')) {
+    if (error.message?.includes('TMDB_API_KEY')) {
       return NextResponse.json(
         { 
           error: 'API Key Error',
           message: error.message,
           troubleshooting: [
-            '1. Get a free API key from http://www.omdbapi.com/apikey.aspx',
-            '2. Add it to .env.local as: OMDB_API_KEY=your_key_here',
+            '1. Get an API key from https://www.themoviedb.org/settings/api',
+            '2. Add it to .env.local as: TMDB_API_KEY=your_key_here',
             '3. Restart your dev server after adding the key'
           ]
         },

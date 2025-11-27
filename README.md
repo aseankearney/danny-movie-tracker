@@ -5,7 +5,7 @@ A web application to track movies that Danny has seen. The app fetches the top 1
 ## Features
 
 - Fetches top 10 grossing movies per year (1989 - current year)
-- Displays movies with posters from OMDb
+- Displays movies with posters from TMDb
 - Simple "Seen It" / "Nope" interface
 - Configurable number of movies displayed at once (default: 3)
 - Database storage for movie status tracking
@@ -16,7 +16,7 @@ A web application to track movies that Danny has seen. The app fetches the top 1
 ### Prerequisites
 
 - Node.js 18+ installed
-- A free OMDb API key from [http://www.omdbapi.com/apikey.aspx](http://www.omdbapi.com/apikey.aspx)
+- A TMDb API key from [https://www.themoviedb.org/settings/api](https://www.themoviedb.org/settings/api)
 - A free Neon Postgres database from [https://neon.tech](https://neon.tech)
 
 ### Installation
@@ -33,7 +33,7 @@ npm install
 
 3. Create a `.env.local` file in the root directory:
 ```
-OMDB_API_KEY=your_omdb_api_key_here
+TMDB_API_KEY=your_tmdb_api_key_here
 DATABASE_URL=postgresql://username:password@hostname/database?sslmode=require
 ```
 
@@ -61,7 +61,7 @@ Quick steps:
 1. Push your code to GitHub
 2. Import your repository in Vercel
 3. Add environment variables in Vercel dashboard:
-   - `OMDB_API_KEY` = your OMDb API key
+   - `TMDB_API_KEY` = your TMDb API key
    - `DATABASE_URL` = your Neon connection string
 4. Deploy!
 

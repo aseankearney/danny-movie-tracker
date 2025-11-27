@@ -161,13 +161,13 @@ export default function Home() {
         <div className="max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
           <h1 className="text-2xl font-bold mb-4 text-red-600 dark:text-red-400">Error Loading Movies</h1>
           <p className="text-gray-700 dark:text-gray-300 mb-4">{error}</p>
-          {(error.includes('OMDB_API_KEY') || error.includes('API Key')) && (
+          {(error.includes('TMDB_API_KEY') || error.includes('API Key')) && (
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-4">
               <h2 className="font-semibold mb-2">Troubleshooting Steps:</h2>
               <ol className="list-decimal list-inside space-y-1 text-sm text-gray-700 dark:text-gray-300">
-                <li>Get a free OMDb API key from <a href="http://www.omdbapi.com/apikey.aspx" className="text-blue-600 dark:text-blue-400 underline" target="_blank" rel="noopener noreferrer">omdbapi.com</a></li>
+                <li>Get a TMDb API key from <a href="https://www.themoviedb.org/settings/api" className="text-blue-600 dark:text-blue-400 underline" target="_blank" rel="noopener noreferrer">themoviedb.org</a></li>
                 <li>Create a <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">.env.local</code> file in the project root</li>
-                <li>Add: <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">OMDB_API_KEY=your_key_here</code></li>
+                <li>Add: <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">TMDB_API_KEY=your_key_here</code></li>
                 <li>Restart your dev server</li>
               </ol>
             </div>
